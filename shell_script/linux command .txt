@@ -1,0 +1,38 @@
+sed -e 's/<\/authorizationStratey>/\t<permission>new1<\/permission>\n  \ <permission>new1<\/permission>\n \ <permission>new1<\/permission>\n \ <permission>new1<\/permission>/' test1.xml
+HUDSON_CONFIG_VAR="<permission>@@epr_id@@<\/permission>\n  \ <permission>@@epr_id@@<\/permission>\n \ <permission>@@epr_id@@<\/permission>\n \ <permission>@@epr_id@@<\/permission>"
+sed -e 's/@@epr_id@@/999901/' ${HUDSON_CONFIG_VAR} >1.log
+
+sed -i "s/<\/authorizationStrategy>/${HUDSON_CONFIG_VAR}/" test.xml>2.log 
+
+grep -rl "<properties/>" /home/casfw/hudson-jobs/jobs/. | xargs sed -f job-permission-templet.xml.sed >1_$(date '+%d%m%y%H%M')
+
+find /home/casfw/files -name core -type f -print | xargs -print -f
+
+find . -name  "*.casfwcfg" | xargs grep -l 'xml'|xargs sed -i -e 's/xml/yyml/g'
+
+find . -name  "*.casfwcfg" | xargs grep -l 'xml'|xargs sed -i -e 's/xml/yyml/g'
+tomcat_hudson_http_port=$(grep tomcat_hudson_connector_http_port ${CASFW_HOME}/etc/casfw.properties | awk -F "=" '{print $2}')
+
+find ! \( -name "999901_*" \) : find the files that file's name donot contain the "999901" string
+ 
+awk -F\|  '{ val1=$1; val2=$2; val3=$3; \
+split(val2, array, ","); \
+for(i in array) \
+{
+ print "{\"" val1 "\"\,\"" array[i] "\"\,\"" val3 "\"}" "\,"
+} \
+}' phone_model2.txt  >formatted2.txt
+
+
+awk -F\\t  '{ val1=$1; val2=$2; val3=$3; \
+split(val2, array, ","); \
+for(i in array) \
+{
+ print "{\"" val1 "\"\,\"" array[i] "\"\,\"" val3 "\"}" "\,"
+} \
+}' phone_model3.txt  >formatted3.txt
+
+//Add a character(#) at the beginning of every line of file
+Using "&" in the replacement string and surround whatever was matched
+1. sed -i 's/.*/#&/' filename
+2. awk '{ printf #; print }' < filename

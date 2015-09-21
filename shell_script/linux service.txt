@@ -1,0 +1,12 @@
+1. create an oracle account
+2. shell script under /etc/rc.d/init.d/. directory
+  content of script:
+3. chkconfig command:
+   chkconfig --add <name>
+   function: /etc/rc.d/rc?.d/*oracle*
+4. modify priority
+   chkconfig --level 235 oracle on
+5. start a service:
+   service oracel status
+
+status:

@@ -1,0 +1,88 @@
+﻿exec 3<E2E-Tools-name-1.txt;
+exec 4<E2E-Tools-value-1.txt;
+while read sline<&3
+do  read dline<&4; 
+code=$(echo $sline | awk -F '=' '{print $2}'); 
+eq="="; 
+str1="    <string name=\"download_hint\">"; str2="</string>"; 
+echo $code$eq$str1$dline$str2 >> result.txt; 
+done
+
+exec 5<result.txt;
+while read sline<&5
+do
+code=$(echo $sline | awk -F '=' '{print $1}')
+#echo $code
+value=$(echo $sline | awk -F '=' '{print substr($0, index($0,$2))}')
+#echo $value
+#filepattern="*-"$code
+dir=$(find ./20140422 -type d -name "*-"$code)
+echo $dir
+if [ $? -eq 0 ]; then
+    pushd $dir
+	grep "download_hint" strings.xml
+	if [ $? -eq 0 ]; then
+       sed -i '/.*download_hint.*/d' strings.xml
+	fi
+    sed -i "s|<\/resources>|    $value\n&|" strings.xml
+	popd
+else
+    continue
+fi
+done
+
+
+echo "tr=<string name=\"download_hint\">Smart Suite</string>" | awk -F '=' '{print substr($0, index($0,$1))}'
+
+//append text to each line begining from 2 line
+sed '2,${s/$/ end of line}' 1.txt
+
+//delete the first match line
+$ sed -i '0,/Gallery_Tip5/{//d;}' *.properties
+
+find new_backup -name "*.properties" -print
+find . -name '*.deb' -exec basename {} \;
+
+find new_backup -name "*.properties" -exec basename {} \;
+
+find new_backup -name "*.properties" -exec basename {} \; -exec cat property_appending.txt >> {} \;
+
+find new_backup -name "*.properties" -exec cat property_appending.txt >> {} \;
+
+sed -i '/trans step 2/,/trans step 3 end/d' Lang_ar_AE.properties//delete all lines between match pattern
+
+//cp single file to multiple directories
+find values-* -type d -exec cp strings.xml {} \;
+
+//replace content in common
+grep -rl "Font(\"" . | xargs sed -i "s/Font(\".*\"/Font(ConfigFile.SYSTEM_FONT/g" 
+grep -rl "Font(.*getName()" . | xargs sed -i "s/Font(.*getName()/Font(ConfigFile.SYSTEM_FONT/g" 
+grep -rl "Font(.*getFontName()" . | xargs sed -i "s/Font(.*getFontName()/Font(ConfigFile.SYSTEM_FONT/g" 
+grep -rl "ConfigFile.getFont()" .  | xargs sed -i 's/ConfigFile.getFont()/ConfigFile.SYSTEM_FONT/g'
+
+while read sline<&3; do  read dline<&4; code=$(echo $sline | awk -F '=' '{print $2}'); eq="="; str1="    <string name=\"download\">"; str2="</string>"; echo $code$eq$str1$dline$str2 >> 1111.txt; done
+
+//The read command reads the contents offileinto the pattern space after the addressed line.
+$ sed -i "/^<Company-list>/r ch05_target" ch05_r
+
+grep --line-number --colour=AUTO --before-context 5 --after-context 5 PATTERN FILENAME
+
+//clear command in cygwin of windows
+install ncurses package
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
