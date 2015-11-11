@@ -1,0 +1,189 @@
+Each Java application runs inside a runtime instance of some concrete implementation of the abstract specifiation of the Java Virtual Machine.
+
+A Java Virtual Machine instance starts running its solitary application by invoking the main() method of some intial class. The main() method must be public, static, return void , and accept one parameter: a String array. Any class with such a main() method can be used as the starting point for a Java application.
+
+If permitted by the security manager, the application can also cause its own demise by invoking the exit() method of class Runtime or System.
+
+Each instance of the Java Virtual Machine has one method area and one heap. These areas are shared by all threads running inside the virtual machine. When the virtual machine loads a class file, it parses information about a type from the binary data contained in the class file. It places this type informtion into the method area. As the program runs, the virtual machine places all objects the program instantiates onto the heap.
+
+As each new thread comes into exitence, it gets its own pc register(program counter) and Java stack. If the thread is executing a Java method(not a native method), the value of the pc register indicates the next instruction to execute. A thread's Java stack stores the state of Java(not native) method invocations for the thread. The state of a Java method invocation includes it's local variables, the parameters with which it was invoked, its return value(if any), and intermediate calculation. The state of native method invocation is stored in an implementation=dependent way in native method stacks. as well as possibliy in registers or other implementation-dependent memory areas. No thread can access the pc register or Java stack of another thread
+
+The Java stack is composed of stack frames(or frames). A stack frame contains the state of one Java method invocation. When a thread invokes a method, the Java Virtual Machine pushes a new frame onto that thread's Java stack. When the method completes, the virtual machine pops and discards the frame for the that method.
+
+The Java Virtual Machine has no registers to hold intermediate data values. The instruction set uses the Java stack fos storage of intermediate data values. 
+
+Inside a Java Virtual Machine instance, information about loaded types is stored in a logical area of memory called the method area. The class loader reads in the class file - a linear stream of binary data -- and passes it to the virutal machine. The virutal machine extracts information about the type from the binary data and stores the information in the method area. Memory for class(static) variables declared in the class file is also taken from the method area.  --- what's information the virtual machine goto be  extracted?  --- only class information, no methods information -- fixed
+
+All threads share the same method area, so access to the method area's data structures must be designed to be thread-safe. If two threads are attempting to find a class named Lava, for example, and Lava has not yet bean loaded, only one thread should be allowed to load it while the other one waits.
+
+For each type is loads, a Java Virtual Machine must store the following kinds of information in the method area:
+1. The fully qualified name of the type
+2. The fully qualified name of the type's direct superclass(unless the type is an interface or class java.lang.Object, neither of which have a superclass)
+3. Whether or not the type is a class or an interface
+4. The type's modifiers(some subset of public, abstract, final)
+5. An ordered list of the fully qualified names of any direct superinterfaces.
+
+Additional information stored in method area including:
+6. The constant pool for the type
+    The Constant Pool -- chapter 6
+    
+7. Field information
+    For each field declared in the type, the following information must stored in the method area. In addition to the information for each field, the order in which the field are declared by the class or interface must also be recorded. Here's the list for fields:
+    a. The field's name
+    b. The field's type
+    c. The field's modifiers(some subset of public , private, protected, static final, volatile, transcient)
+    
+8. Method information  -- method's stack frame should be allocated when the method is invoked ???
+
+9. All class (static) variables declared in the type, except constants
+    class variables are shared among all instances of a class and can be accessed even in the absence of any instance. Before a Java Virtual Machine uses a class, it must allocate memory from the method area for each non-final class variable declared in the class
+    
+    Constant (class variables declared final) are not treated in the same way as non-final class variables. Every type that uses a final class variable gets a copy of the constant value in its own constant pool. 
+10. A reference to class ClassLoader
+11. A reference to class Class
+    An instance of class java.lang.Class is created by the Java Virtual Machine for every type it loads.
+
+
+    
+For each non-abstract class a Java Virtual Machine loads, it could generate a method table and include it as part of the class information it stores in the method area. A method table is an array of direct references to all the instance methods that may be invoked on a class instance, including instance methods inherited from superclass. -- method tables are described in Chapter 8
+ 
+    
+questions in chapter 5
+1. how to store static field and final field the method area ???
+2. what's the difference between the primorial class loader and a class loader object ???
+
+
+As there is only one heap inside a Java Virtual Machine instance, all threads share it. So two different threads of the same application, however, could trample on each other's heap data.
+
+The Java Virtual Machine has an instruction that allocates memory on the heap for a new object.
+
+Arrays are always stored on the heap. Arrays have a Class instance associated with their class, just like any other object. All arrays of the same dimension and type have the same class. The length of an array does not play any role in establishing the array's class. 
+
+
+Each thread of a running program has its own pc register, or program counter, which is created when the thread is started. 
+
+
+When a new thread is launched, the Java Virtual Machine creates a new Java stack for the thread. A Java stack stores a thread's state in discrete frames. The Java virtual machine only performs two operations directly on Java stack: it pushes and pops frames. 
+
+When a thread invokes a Java method, the virtual machine creates and pushes a new frame onto the thread's Java stack. As the method executes, it uses the frame to store parameters, local variables, intermediate computations, and other data. 
+
+
+All the data on a thread's Java stack is private to that thread. There is no way for a thread to access or alter the Java stack of another thread. Because of this, you need never worry about synchronizing multi-threaded access to local variables in your program. When a thread invokes a method, the method's local variables are stored in a frame on the invoking thread's Java stack 
+
+The stack Frame includes local variable, operand stack and frame data
+The stack frame has three parts: local variables, operand stack, and frame data. 
+    a. Local variables  
+        the local variables section contains a method's parameters and local variables. Compilers place the parameters into the local variable array first, in the order in which they are declared.
+    b. operand stack --- Note that the operand stack of the current frame is always at the "top" of the Java stack.
+        The Java Virtual Machine uses the operand stack as a work space
+    c. Frame data
+        In addition to the local varibles and operand stack, the Java stack frame includes data to support constant pool resultion, normal method return, and exception dispatch. This data is stored in the frame data portion of the Java stack frame. 
+        
+        The frame data must also contain some kind of reference to the method's exception table, which the virutal machine uses to process any exceptions thrown during the course of execution of the method.
+        
+
+        
+Execution Engine
+At the core of any Java Virtual Machine implementation is its execution engine. In the Java Virtual Machine specification, the behavior of the execution engine is defined in terms of an instruction set.
+
+Each thread of a running Java application is a distinct instance of the virtual machine's execution engine.
+
+        
+Chapter 6 The Java Class file 
+The first four bytes of every java class file are its magic number, 0xCAFEBABE. The magic number makes non-Java class files easier to identify. If a file doesn't start with 0xCAFEBABE, it definitely isn't a Java class file. 
+
+Constants such as literal strings, final variable values, class names, and method names are stored in constant pool. A count of the number of entries in the list, constant_pool_count, precedes the actual list, constant_pool.
+
+Each constant pool entry starts with a one-byte tag that indicates the type of constant making its home at that position in the list. 
+
+The access flags reveal several pieces of information about the class or interface defined in the file. To start with, the access flags indicate whether the file defines a class or an  interface. The access flags also indicate what modifiers were used in the declaration of the class or interface.
+
+fields_count 
+A count of the number of fields, including both class and instance variables.
+fields is a list of variable-length field_info tables, one for each field.(The fields_count indicates the number of field_info tables in the list.) The only fields that appear in the  fields list are those that were declared by the class or interface defined in the file. No fields inherited from superclasses or superinterfaces appear in the fields list. 
+
+Each field_info table reveals information about one field. The table contains the field's name, descriptor, and modifiers. If the field is declared as final, the field_info table also reveals the field's constant value.
+
+The Java Virtual Machine specification defines two kinds of attributes that may appear in the attributes list of the ClassFile table:SourceCode and InnerClasses.
+
+
+Chapter 7
+
+The Java Virtual Machine makes types available to the running program through a process of loading, linking, and initialization. Loading is the process of bringing a bianry form for a type into the Java Virtual Machine. Linking is the process of incorporating the binary type data into the runtime state of the virtual machine. Linking is divided into three sub-steps: verification, preparation, and resolution. Verification ensures the type is properly formed and fit for use by the Java Virtual Machine. Preparation involves all allocating memory needed by the type, such as memory for any class variables. Resolution is the process of transforming symbolic references in the constants pool into direct references.  During initialization, the class variables are given their proper initial values.
+
+All implementations must initialize each class and interface on its first active use. An active use of a class is:
+    1. The invocation of a constructor on a new instance of the class
+    2. The creation of an array that has the class as its an element type.
+    3. The invocation of a method declared by the class(not inherited from a superclass)
+    4. The use or assignment of a field declared by the class(not inherited from a superclass or superinterface), except for fields that are both static and final, and are initilized by a compile=time constant expression.
+    
+An active use of an interface is:
+    1. The use or assignment of a field declared by the interface(not inherited from a superinterface), except for fields that are initialized by a compile-time constant expression.
+    
+boolean is not a primitive type in the Java virtual Machine. Internally, boolean is implemented as an int, which gets set to zero(boolean false) by default. Therefore, boolean class variables are in effect initialized to boolean false;
+
+All the class variable initializers and static initializers of a class are collected by the Java compiler and placed into one special method, the class initialization method. In the Java class file, the class initializtion method is named "<clinit". Regular methods of a Java application cannot invoke a class initialization method. This kind of method can only be invoked by the Java Virtual Machine, which invokes it to set a class's static variables to their proper initial values.
+
+
+The Java compiler generates at least one instance initialization method for every class it compiles. In the Java class file, the instance initialization method is named "<init." For each constructor in the source code of a class, the Java compiler generates one <init() method.  If the class declared no constructors explicitly, the compiler generats a default no-arg constructors that just ivokes the superclass's no-arg constructor. 
+
+The garbage collector may invoke an object's finalizer at most once, sometimes after the object becomes unreferenced and before the memory it occupied is reused. If the object becomes referenced again(resurrected) as a result of result of executing the finalizer code, and then becomes unreferenced again later, the garbage collector must not automatically invoke the finalizer a second time.
+
+Any exceptions thrown by the finalizer() method during its automatic invocation by the garbage collector are ignored.
+
+The Java Machine will run a class's classFinalize() method(if the class declares one) before it unloads the class.
+
+Multiple Collectors:
+1. Parallel Scavenge(PS)
+2. Cocurrent Mark Sweep(CMS)
+3. Incremental Concurrent Mark Sweep(iCMS)
+4. Garbage First(G1)
+
+Parallel Scavenge
+Parallel in the context of parallel scavenge means the collection is done by multiple threads running at the same time. This shouldn't be confused with incremental GC, where the collector runs at the same time, as or interleaved with the program. The parallelism is achieved by giving each thread a set of the roots to mark and a segment of the table of objects.
+
+There are two survivor spaces, but only one of them is active at any point in time. They are collected in the same way as eden. The idea is that objects get copied to the active survivor space when they are promoted from eden.
+
+Summary
+    1. Parallel Scavenge splits heap up into 4 spaces: eden, two survior spaces and tenured
+    2. Parallel Scavenge uses a parallel, copying collector to collector Eden and Survivor Spaces
+    3. A different algorithm is used for the tenured space. This marks all live objects, deletes the dead objects and then compacts the space
+    4. Parallel Scavenge has good througout but it pauses the whole program when it runs.
+    
+The Concurrent Mark Sweep(CMS) collector is designed to be a lower latency collector than the parallel collectors. The key part of this design is trying to do part of the garbage collection at the same time as the application is running. This means that when the collector needs to pause the application's execution it doesn't need to pause for as long.
+
+In the context of GC Parallel means "uses multiple threads to perform GC at the same time" and Concurrent means "the GC runs at the same time as the application its collecting"
+
+Young Generational Collection
+The young gen collector in CMS is called ParNew and it actually uses the same basic algorithm as the Parallel Scavenge collector in the parallel collectors. Bare in mind this also means that the young generational collector is stop the world
+
+As with the ParOld collector the CMS tenured collector uses a mark and sweep algorithm, in which live objects are marked and then dead objects are deleted. Deleted is really a strange term when it comes to memory management. The collector isn't actually deleting objects in the sense of blanking memory, it merely returning the memory  associated with that object to the space that the memory system can allocate from -- the freelist. Even though its termed a concurrent mark and sweep collector, not all phases run concurrently with the application's execution, two of them stop the world and four run concurrently. 
+
+In ParOld garbage collection is triggered when you run out of space in the tenured heap. This approach works because ParOld simply pauses the application to collect. In order for the application to continue operating during a tenured collection, the CMS collector needs to start collecting when there is a still enough working space left in tenured.
+
+So CMS starts based on how full up tenured is - the idea is that the amount of free space left is your window of opportunity to run GC. This is known as the initiating occupancy fraction and is decribed in terms of how full the heap is, os the fraction of 0.7 gives you a window of 30% of your heap to run the CMS GC before you run out of heap.
+
+Phases
+Once the GC is triggered, the CMS algorithm consists of a series of phases run in sequence.
+    1. Initial Mark - Pauses all application threads and marks all objects directly reachable from root objects as live. This phase stops the world.
+    2. Concurrent mark - Application threads are restarted. All live objects are transitively marked as reachable by following references from the objects marked in the initial mark.
+    3. Concurrent Preclean - This phase looks at objects which have been updated or promoted during the concurrent mark or new objects that have been allocated during the concurrent mark. It updates the mark bit to denote whether these objects are live or dead. This phase may run repeatedly until there is a specified occupancy ratio in Eden.
+    4. Remark - Since some objects may have been updated during the preclean phase its still necessary to do stop the world in order to process the residual objects. This phase does a retrace from the roots. It also processes reference objec such as soft and weak references.  This phase stops the world.
+    5. Concurrent sweep - This looks through the ordinary object pointer(OOP) table, which references all objects in the heap, and finds the dead objects. It then re-adds the memory allocated to those objects to its freelist. This is the list of space from which object can be allocated.
+    6. Concurrent Reset - Reset all internal data structures in oder to able to run CMS again in future.
+    
+A concurrent mode failure happens when there isn't enough space in tenured to promote an object. There are two causes for this:
+    1. An object is promoted that is too large to fit into any contiguous space in memory
+    2. There isn't enough space in tenured to account for the rate of live objects being promoted.
+    
+This might happen because the concurrent collection is unable to free space fast enough given the object promotion rates or because the continued use of the CMS collector has resulted in a fragmented heap and there's no individual space large enough to promote an object into. In order to properly "defrag" the tenured heap space a full GC is required.
+
+CMS doesn't collect permgen space by default, and requires the XX:+CMSClassUnloadingEnabled flag enabled in order to do so. If, whilst using CMS, you run out of permgen space without this flag switched on it will trigger a full GC. Furthermore permgen space can hold references into normal heap via things like classloaders, which means that until you collect permgen you may be leaking memory in regular heap.
+
+Float Garbage
+At the end of a CMS collection its possible for some objects to not have been deleted - this is called Float Garbage. This happens when objects become dereferenced since the initial mark. The concurrent preclean and the remark phase ensure that all live objects are marked by looking at objects which have been created, mutated or promoted. If an object has become dereferenced between the initial mark and the remark phase then it would require a complete retrace of the entire object graph in order to find all dead objects. This is obviously very expensive, and the remark phase must be kept short since its a pausing phase.
+
+
+The G1 collector is the latest collector to be implemented in the hotspot JVM. Its been a supported collector ever since Java 7 Update 4. 
+
+CMS also doesn't 'defrag' its heap so at some point in time you'll get a concurrent mode failure(CMF), triggering a full gc. Once you get into this full gc scenario you can except a pause in the timeframe of roughly 1 second per Gigabyte of live objects. With CMS your 100GB heap can be a 1.5 minute GC Pause ticking time bomb waiting to happen..
