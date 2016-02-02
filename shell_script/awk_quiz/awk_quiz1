@@ -1,0 +1,24 @@
+# Print the length of the longest in mail_list
+awk '{if (length($0) > max) max = length($0)} END {print max}' mail_list
+# Count the lines in a file
+awk 'END {print NR}' mail_list
+
+# Transpose a file
+awk '{
+    for(i=1;i<=NF;i++){
+        a[NR,i] = $i
+    }
+    if (NF > p) {
+        p=NF
+    }
+}
+
+END {
+    for(row=1;row<=p;row++){
+        str=a[1,row]
+        for(col=2;col<=NR;col++){
+            str=str" "a[col,row]
+        }
+        print str
+    }
+}' file.txt
