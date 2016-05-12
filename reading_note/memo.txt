@@ -1,0 +1,182 @@
+modify domain name (have a try)
+/var/lib/dhclient/dhclient.eth0.d
+
+mvn install
+mvn install:install-file -Dfile=c:\Users\zhanlinl\.m2\repository\sonar-2.12.zip -DgroupId=org.codehaus.sonar.app -DartifactId=sonar   -Dversion=2.12  -Dpackaging=zip
+
+install slave node in hudson build cloud 
+1. modify the etc/casfw.properties file including master_host_name, master_host_port
+2. create directory :/opt/casfw/ci/slave1/fs
+3. configure java path environment in slave node computer
+4. when installing the second slave node ,please pass an parameter of slave name on the command
+
+install master node in hudson build cloud
+1. the data directory distributes from the directory of installation, the directory named /opt/casfw/ci/data/var
+2. before installation the master node ,create "/opt/casfw/ci/data" directory firstly
+
+cpu and memery monitor command:
+sar -ur -o /opt/casfw/1.log 5 10800 > /dev/null 2>&1 
+sar -r -f /opt/casfw/1.log >mem.log
+
+clean objects in oracle database
+SET SERVEROUTPUT ON SIZE 1000000
+BEGIN
+  FOR cur_rec IN (SELECT object_name, object_type 
+                  FROM   user_objects
+                  WHERE  object_type IN ('TABLE', 'VIEW', 'PACKAGE', 'PROCEDURE', 'FUNCTION', 'SEQUENCE')) LOOP
+    BEGIN
+      IF cur_rec.object_type = 'TABLE' THEN
+        EXECUTE IMMEDIATE 'DROP ' || cur_rec.object_type || ' "' || cur_rec.object_name || '" CASCADE CONSTRAINTS';
+      ELSE
+        EXECUTE IMMEDIATE 'DROP ' || cur_rec.object_type || ' "' || cur_rec.object_name || '"';
+      END IF;
+    EXCEPTION
+      WHEN OTHERS THEN
+        DBMS_OUTPUT.put_line('FAILED: DROP ' || cur_rec.object_type || ' "' || cur_rec.object_name || '"');
+    END;
+  END LOOP;
+END;
+/
+
+
+install nexus professional
+cp nexus-professional-2.0.2-bundle.tar.gz /home/casfw/nexus
+tar -xvf nexus-professional-2.0.2-bundle.tar.gz
+ln -s nexus-professional-2.0.2-bundle.tar.gz nexus
+tail -f logs/wrapper.log
+
+mvn install:install-file -DgroupId=org.sonatype.nexus -DartifactId=nexus-webapp -Dversion=2.0.1 -Dpackaging=war -Dfile=C:\openSource\nexus-2.0.1.war
+
+hudson master installation directory:/opt/casfw/build-master-1.0.0-SNAPSHOT
+hudson jobs and log files directory:/casfw/var/data/hudson/master 
+
+hudson slave directory:/opt/casfw/
+
+for master 
+ binary dir : /opt/casfw/build-master-1.0.0-SNAPSHOT
+ data   dir : /casfw/var/data/hudson/master/
+for slave1 
+ binary dir : /opt/casfw/build-slave1-1.0.0-SNAPSHOT
+ data   dir : /opt/casfw/build-slave1-1.0.0-SNAPSHOT/var
+
+lsof - list open files
+
+ wc - print newline, word, and byte counts for each file
+ 
+ 
+ modify file handle limits 
+ add to /etc/security/limits.conf following lines:
+* soft nofile 2048
+* hard nofile 4096
+
+
+exec command:
+find -name config.xml  -exec sed -i -e 's/<spec>\*\/5 \* \* \* \*<\/spec>/<spec>\*\/15 \* \* \* \*<\/spec>/g' {} \;
+find -name config.xml -exec sed -i -e 's/<disabled>false<\/disabled>/<disabled>true<\/disabled>/g' {} \;
+find . -maxdepth 2 -type d -name "118361_*" -not -name "*build-cloud*" -not -name "*parent*" -exec cp -r {} {}_2 \;
+
+find ~ -type f -mmin -90 | xargs ls -l
+
+find ${NEXUS_HOME}/lib -name appcontext-*.jar -or -name plexus-*.jar
+
+date format:
+mv "$HOME/.m2/settings.xml" "$HOME/.m2/settings.xml.$(date '+%Y%m%d_%H%M%S')"
+find . -maxdepth 2 -type d -name "DP10*" -not -name "*shared" -exec cp -r {} {}_2 \;
+
+sed command manipulation string
+echo "11byteabc" | sed 's/*[a-z]//
+sed command replace string with variable
+sed -i -e "s/nexus-work=\/sonatype-work/nexus-work=${safe_casfw_home}\/software\/sonatype-work/" filename
+
+sar command:
+ sar -urb -o hbc-rpt-executor_10.log 5 10800 >report-executor_10.log 2>&1 &
+ -r report memory utilization statistic
+ -u report cpu utilization statistic
+ -b report I/O and transfer rate statistics
+ start time:2:35
+ 
+collect cpu statistic data
+sar -u -f hbc-rpt.log >cpu.log
+
+
+
+
+sonar DB:
+CASCIP =
+  (DESCRIPTION =
+    (SDU = 32768)
+    (enable = broken)
+    (LOAD_BALANCE = yes)
+    (ADDRESS = (PROTOCOL = TCP)(HOST = hostname)(PORT = 1526))
+    (CONNECT_DATA =
+      (SERVICE_NAME = CASCIP)
+    )
+  )
+  
+
+oracle JDBC configure:
+jdbc:oracle:thin:@hostname:1526/CASCII
+oracle JDBC load-balance configure
+jdbc:oracle:thin:@(DESCRIPTION=(SDU=000)(enable=broken)(LOAD_BALANCE=yes)(ADDRESS=(PROTOCOL=TCP)(HOST=hostname)(PORT=1526))(ADDRESS=(PROTOCOL=TCP)(Host=hostname)(Port=1526))(CONNECT_DATA=(SERVICE_NAME=CASCIP)))
+ 
+
+
+Apache DS
+Basic server parameters:
+Hostname:localhost
+Port:10389
+Suffix ("Base DN"):o=sevenSeas
+Admin user DN:uid=admin,ou=system
+Admin user password:secret
+ 
+check network port status linux
+netstat -nap
+
+jetspeed localization:
+
+convert UTF-8 charaters to Unicode with native2ascii
+save file Messages_zh.properties.orig as "UTF-8"
+use native2ascii command to convert it into Unicode format:
+native2ascii -encoding utf8 Messages_zh.properties.orig Messages_zh.properties
+
+
+modify language for one page
+add line:
+<metadata name="title" xml:lang="zh">Chinese Character</metadata>
+
+
+display more information about package
+# rpm -qi iptables
+
+
+convert pdf to plain text
+pdftotext
+
+grep MS-word in linux
+catdoc -reads MS-word file and puts its content as plain text on standard output
+
+
+download file with its real name
+wget --content-disposition --quiet "website"
+
+
+mv "$HOME/.m2/settings.xml" "$HOME/.m2/settings.xml.$(date '+%Y%m%d_%H%M%S')"
+
+find file and sort by date modified
+-t     sort by modification time
+-r, --reverse
+              reverse order while sorting
+ -1     list one file per line
+find /wherever/your/files/hide -type f -exec ls -1rt "{}" +;
+
+extract content of a file to another file
+awk '/<slaves>.*/,/<\/slaves>/{print}' ${CONFIG_FILE} > ${CASFW_HOME}/slave-node-definition.temp
+
+insert content of a file into another file and replace the line matching the pattern
+sed -i -e '/<slaves><\/slaves>/{r slave-node-definition.temp' -e 'd}' config.xml
+
+insert content of a file into another file after specific line
+sed -i -e '/<\/slaves>/r view.txt' -e '$G' config.xml
+
+delete match pattern information of a file
+ sed -i -e '/<views>.*/,/<\/views>/d' config.xml.original
