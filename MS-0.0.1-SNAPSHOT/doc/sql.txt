@@ -1,0 +1,26 @@
+# create table employee
+CREATE TABLE employee (
+id bigint(20) NOT NULL AUTO_INCREMENT,
+firstName varchar(20) NOT NULL,
+lastName varchar(20) NOT NULL,
+ldapUserName varchar(20) DEFAULT NULL,
+gender tinyint(1) NOT NULL COMMENT '1: Male, 2 Female',
+birthDate date,
+title varchar(20),
+grade varchar(20),
+deptId bigint(20) NOT NULL,
+PRIMARY KEY(`id`),
+FOREIGH KEY(`deptId`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8
+
+
+# create table department
+CREATE TABLE department (
+id bigint(20) NOT NULL AUTO_INCREMENT,
+name varchar(20) NOT NULL,
+location varchar(50) NOT NULL,
+managerId bigint(20) DEFAULT NULL,
+openPosition int(1) DEFAULT '0',
+parentDeptId bigint(20),
+PRIMARY KEY(`id`),
+)ENGINE=InnoDB DEFAULT CHARSET=utf8
