@@ -1,0 +1,5 @@
+Writing Fast Tests Against Enterprise Rails| 60
+Communicating Over Distance |60
+Rails Magic| 60
+Ruby on Rails: Why We Should Move On |60
+Ruby on Rails Legacy App Maintenance |60
